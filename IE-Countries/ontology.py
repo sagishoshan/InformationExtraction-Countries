@@ -1,9 +1,6 @@
 import requests
 import lxml.html
 import rdflib
-from rdflib import Graph, Literal, RDF, URIRef
-# rdflib knows about some namespaces, like FOAF
-from rdflib.namespace import FOAF, XSD
 
 wiki_prefix = "http://en.wikipedia.org"
 
