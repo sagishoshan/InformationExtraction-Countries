@@ -7,8 +7,7 @@ print("command is", command)
 print("input is", given_input)
 
 if command == "create":
-    print("case1")
-    #todo - create an ontology "ontology.nt" (given_input)
+    ontology.createOntology()
 
 
 
