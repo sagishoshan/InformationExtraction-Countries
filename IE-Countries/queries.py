@@ -23,7 +23,7 @@ Q4 = 'SELECT (count(?country) as ?c) \
         }'
 
 
-AllQueries = [Q1,Q2,Q3,Q4]
+AllQueries = [Q1, Q2, Q3, Q4]
 
 
 def getData():
@@ -35,5 +35,6 @@ def getData():
         for q in x:
             print(q)
         print("\n\n")
+
 
 getData()
