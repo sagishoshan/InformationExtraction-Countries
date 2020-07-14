@@ -161,8 +161,13 @@ def parse_question(question_to_parse):
                 for fmt in ('%d %B %Y', '%B %d, %Y'):
                     try:
                         print(datetime.datetime.strptime(q[0].replace("_", " "), fmt).date())
+                        return
                     except ValueError:
-                        pass
+                        if fmt == '%B %d, %Y':
+                            print(q[0].replace("_", " "))
+                            return
+                        else:
+                            pass
 
         elif input_breakdown[3] == "prime" and input_breakdown[4] == "minister":
             prefix_length = len("When was the prime minister of ")
@@ -182,8 +187,13 @@ def parse_question(question_to_parse):
                 for fmt in ('%d %B %Y', '%B %d, %Y'):
                     try:
                         print(datetime.datetime.strptime(q[0].replace("_", " "), fmt).date())
+                        return
                     except ValueError:
-                        pass
+                        if fmt == '%B %d, %Y':
+                            print(q[0].replace("_", " "))
+                            return
+                        else:
+                            pass
 
     if relation is not None and entity is not None:
         breakdown = [relation, entity]
@@ -226,6 +236,14 @@ def createOntology(name):
             "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = 'President']/ancestor::tr/td//a/text()")
         primeMinister = doc.xpath(
             "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = 'Prime Minister']/ancestor::tr/td//a/text()")
+        if (countryLink == "/wiki/Burundi"):
+            primeMinister = doc.xpath(
+                "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = 'Prime minister ']/ancestor::tr/td//a/text()")
+        if (countryLink == "/wiki/Cape_Verde"):
+            primeMinister = doc.xpath(
+                "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = ' Prime Minister']/ancestor::tr/td//a/text()")
+            president = doc.xpath(
+                "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = ' President']/ancestor::tr/td//a/text()")
         if countryLink == "/wiki/Russia":
             population = doc.xpath(
                 "//table[contains(@class,'infobox')]/tbody/tr/th/a[text() = 'Population']/ancestor::tr/following-sibling::tr[1]/td//text()[1]")
@@ -239,7 +257,7 @@ def createOntology(name):
         if len(population) == 0:
             population = doc.xpath(
                 "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Population']/ancestor::tr/following-sibling::tr[1]/td/span/text()")
-        if countryLink == "/wiki/Dominican_Republic" or countryLink == "/wiki/Vanuatu":
+        if countryLink == "/wiki/Dominican_Republic" or countryLink == "/wiki/Vanuatu" or countryLink == "/wiki/Malta":
             population = doc.xpath("//table[contains(@class,'infobox')]/tbody/tr/th/a[text() = 'Population']/ancestor::tr/following-sibling::tr[1]/td/span/text()")
         if countryLink == "/wiki/Channel_Islands":
             population = doc.xpath("//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Population']/ancestor::tr/td/text()")
@@ -265,6 +283,9 @@ def createOntology(name):
         if countryLink == "/wiki/Vatican_City":
             capital = doc.xpath(
                 "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Capital']/ancestor::tr/td/span/b/text()")
+        if countryLink == "/wiki/Gibraltar":
+            capital = doc.xpath(
+                "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Capital']/ancestor::tr/td/text()")
         presidentLink = doc.xpath(
             "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = 'President']/ancestor::tr/td//a/@href")
         presidentBirthDate = ""
@@ -273,16 +294,25 @@ def createOntology(name):
             doc = lxml.html.fromstring(res.content)
             presidentBirthDate = doc.xpath(
                 "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Born']/ancestor::tr/td/text()[position()<4]")
+            if len(presidentBirthDate) == 0 or len(presidentBirthDate[0]) < 5:
+                presidentBirthDate = doc.xpath(
+                    "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Born']/ancestor::tr/td/span/text()[position()<4]")
         res = requests.get(wiki_prefix + countryLink)
         doc = lxml.html.fromstring(res.content)
         pmLink = doc.xpath(
             "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = 'Prime Minister']/ancestor::tr/td//a/@href")
         pmBirthDate = ""
+        if len(pmLink) == 0:
+            pmLink = doc.xpath(
+                "//table[contains(@class,'infobox')]/tbody/tr/th/div/a[text() = 'Prime minister ']/ancestor::tr/td//a/@href")
         if len(pmLink) > 0:
             res = requests.get(wiki_prefix + pmLink[0])
             doc = lxml.html.fromstring(res.content)
             pmBirthDate = doc.xpath(
                 "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Born']/ancestor::tr/td/text()[position()<4]")
+            if len(pmBirthDate) == 0 or len(pmBirthDate[0]) < 5:
+                pmBirthDate = doc.xpath(
+                    "//table[contains(@class,'infobox')]/tbody/tr/th[text() = 'Born']/ancestor::tr/td/span/text()[position()<4]")
         countryName = countryLink[6:].replace(" ", "_")
         country = rdflib.URIRef('http://example.org/' + countryName)
         if len(president) > 0:

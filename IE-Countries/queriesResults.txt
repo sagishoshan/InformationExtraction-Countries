@@ -1,13 +1,16 @@
 Query 1:
-(rdflib.term.Literal('132', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#integer')),)
+(rdflib.term.Literal('134', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#integer')),)
+
 
 
 Query 2:
 (rdflib.term.Literal('233', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#integer')),)
 
 
+
 Query 3:
 (rdflib.term.Literal('150', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#integer')),)
+
 
 
 Query 4:
